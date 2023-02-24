@@ -1,0 +1,48 @@
+---
+apiVersion: zookeeper.stackable.tech/v1alpha1
+kind: ZookeeperZnode
+metadata:
+  name: druid-znode
+spec:
+  clusterRef:
+    name: zookeeper
+---
+apiVersion: druid.stackable.tech/v1alpha1
+kind: DruidCluster
+metadata:
+  name: druid
+spec:
+  version: 24.0.0-stackable0.1.0
+  zookeeperConfigMapName: druid-znode
+  metadataStorageDatabase:
+    dbType: derby
+    connString: jdbc:derby://localhost:1527/var/druid/metadata.db;create=true
+    host: localhost
+    port: 1527
+  deepStorage:
+    hdfs:
+      configMapName: hdfs
+      directory: /data
+  brokers:
+    roleGroups:
+      default:
+        replicas: 1
+  coordinators:
+    roleGroups:
+      default:
+        replicas: 1
+  historicals:
+    roleGroups:
+      default:
+        replicas: 1
+  middleManagers:
+    roleGroups:
+      default:
+        replicas: 1
+  routers:
+    roleGroups:
+      default:
+        replicas: 1
+
+# portforward if no stackablectl available (stackablectl svc list):
+# kubectl port-forward svc/druid-router 8888 2>&1 >/dev/null &
