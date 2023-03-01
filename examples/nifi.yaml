@@ -13,7 +13,7 @@ metadata:
   name: nifi-admin-credentials
 stringData:
   username: admin
-  password: admin
+  password: adminadmin
 ---
 apiVersion: nifi.stackable.tech/v1alpha1
 kind: NifiCluster
@@ -32,6 +32,24 @@ spec:
       keySecret: nifi-sensitive-property-key
       autoGenerate: true
   nodes:
+    config:
+      resources:
+        memory:
+          limit: '6Gi'
+        cpu:
+          min: "1"
+          max: "4"
+        storage:
+          contentRepo:
+            capacity: "10Gi"
+          databaseRepo:
+            capacity: "5Gi"
+          flowfileRepo:
+            capacity: "5Gi"
+          provenanceRepo:
+            capacity: "5Gi"
+          stateRepo:
+            capacity: "5Gi"
     roleGroups:
       default:
         replicas: 2
