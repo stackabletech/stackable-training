@@ -1,5 +1,5 @@
-# stackablectl operator install commons secret hive zookeeper
 # helm install minio minio --repo https://charts.bitnami.com/bitnami --set auth.rootUser=admin --set auth.rootPassword=adminadmin
+# helm install postgresql --namespace default --version 12.1.5 --set auth.username=admin --set auth.password=adminadmin --set auth.database=test --set primary.extendedConfiguration="password_encryption=md5" --repo https://charts.bitnami.com/bitnami postgresql
 ---
 apiVersion: trino.stackable.tech/v1alpha1
 kind: TrinoCluster
@@ -43,14 +43,14 @@ spec:
   connector:
     hive:
       metastore:
-        configMap: simple-hive-derby
+        configMap: simple-hive
       s3:
         reference: minio
 ---
 apiVersion: hive.stackable.tech/v1alpha1
 kind: HiveCluster
 metadata:
-  name: simple-hive-derby
+  name: simple-hive
 spec:
   version: 3.1.3-stackable0.1.0
   metastore:
@@ -59,10 +59,10 @@ spec:
         replicas: 1
         config:
           database:
-            connString: jdbc:derby:;databaseName=/tmp/metastore_db;create=true
-            user: APP
-            password: mine
-            dbType: derby
+            connString: jdbc:postgresql://postgresql:5432/test
+            user: admin
+            password: adminadmin
+            dbType: postgres
   s3:
     reference: minio
 ---
